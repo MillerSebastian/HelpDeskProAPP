@@ -28,6 +28,7 @@ import { ArrowLeft, Send, Loader2, User, Clock, CheckCircle2 } from "lucide-reac
 import Link from "next/link";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { UserAvatar } from "@/components/UserAvatar";
 
 const getStatusColor = (status: string) => {
     switch (status) {
@@ -225,14 +226,12 @@ export default function AgentTicketDetailsPage() {
                                                         className={`flex gap-4 ${comment.authorRole === "agent" ? "flex-row-reverse" : ""
                                                             }`}
                                                     >
-                                                        <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center overflow-hidden ${comment.authorRole === "agent" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
-                                                            }`}>
-                                                            {comment.authorPhotoURL ? (
-                                                                <img src={comment.authorPhotoURL} alt={comment.authorName} className="h-full w-full object-cover" />
-                                                            ) : (
-                                                                <User className="h-4 w-4" />
-                                                            )}
-                                                        </div>
+                                                        <UserAvatar
+                                                            userId={comment.authorId}
+                                                            src={comment.authorPhotoURL}
+                                                            alt={comment.authorName}
+                                                            className="flex-shrink-0"
+                                                        />
                                                         <div className={`flex flex-col max-w-[80%] ${comment.authorRole === "agent" ? "items-end" : "items-start"
                                                             }`}>
                                                             <div className="flex items-center gap-2 mb-1">
@@ -244,8 +243,8 @@ export default function AgentTicketDetailsPage() {
                                                                 </span>
                                                             </div>
                                                             <div className={`p-3 rounded-lg text-sm ${comment.authorRole === "agent"
-                                                                    ? "bg-blue-600 text-white rounded-tr-none"
-                                                                    : "bg-gray-100 text-gray-800 rounded-tl-none"
+                                                                ? "bg-blue-600 text-white rounded-tr-none"
+                                                                : "bg-gray-100 text-gray-800 rounded-tl-none"
                                                                 }`}>
                                                                 {comment.message}
                                                             </div>
