@@ -34,6 +34,28 @@ export const createTicket = async (ticketData: Omit<Ticket, "id" | "createdAt" |
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
         });
+
+        // Notify all agents
+        const q = query(collection(db, "users"), where("role", "==", "agent"));
+        const querySnapshot = await getDocs(q);
+
+        const emailPromises = querySnapshot.docs.map(doc => {
+            const agent = doc.data();
+            if (agent.email) {
+                return fetch("/api/send-email", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        to: agent.email,
+                        subject: `New Ticket: ${ticketData.title}`,
+                        text: `A new ticket has been created by ${ticketData.createdByName}.\n\nTitle: ${ticketData.title}\nDescription: ${ticketData.description}\n\nView it on the dashboard.`,
+                    }),
+                });
+            }
+        });
+
+        await Promise.all(emailPromises);
+
         return docRef.id;
     } catch (error) {
         console.error("Error creating ticket:", error);
@@ -130,6 +152,27 @@ export const assignTicket = async (ticketId: string, agentId: string) => {
             assignedTo: agentId,
             updatedAt: serverTimestamp(),
         });
+
+        // Notify client
+        const ticketSnap = await getDoc(docRef);
+        if (ticketSnap.exists()) {
+            const ticket = ticketSnap.data() as Ticket;
+            const clientDoc = await getDoc(doc(db, "users", ticket.createdBy));
+            const agentDoc = await getDoc(doc(db, "users", agentId));
+
+            if (clientDoc.exists() && clientDoc.data().email && agentDoc.exists()) {
+                const agentName = agentDoc.data().name || "An agent";
+                await fetch("/api/send-email", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        to: clientDoc.data().email,
+                        subject: `Ticket Assigned: ${ticket.title}`,
+                        text: `Your ticket "${ticket.title}" has been assigned to ${agentName}.`,
+                    }),
+                });
+            }
+        }
     } catch (error) {
         console.error("Error assigning ticket:", error);
         throw error;
