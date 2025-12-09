@@ -28,6 +28,14 @@ export default function LoginPage() {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
+            // Check if email is verified
+            if (!user.emailVerified) {
+                await auth.signOut();
+                setError("Please verify your email address before logging in.");
+                setLoading(false);
+                return;
+            }
+
             // Fetch user role
             const userDoc = await getDoc(doc(db, "users", user.uid));
             if (userDoc.exists()) {
@@ -171,14 +179,6 @@ export default function LoginPage() {
                         </Button>
                     </div>
                 </CardContent>
-                <CardFooter className="flex justify-center">
-                    <p className="text-sm text-muted-foreground">
-                        Don't have an account?{" "}
-                        <Link href="/auth/register" className="text-primary hover:underline">
-                            Sign up
-                        </Link>
-                    </p>
-                </CardFooter>
             </Card>
         </div>
     );
