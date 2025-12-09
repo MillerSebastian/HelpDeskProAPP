@@ -56,6 +56,21 @@ export const getTicketsByUser = async (userId: string) => {
     }
 };
 
+export const getTicketsByAssignee = async (agentId: string) => {
+    try {
+        const q = query(
+            collection(db, "tickets"),
+            where("assignedTo", "==", agentId),
+            orderBy("createdAt", "desc")
+        );
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Ticket));
+    } catch (error) {
+        console.error("Error getting assigned tickets:", error);
+        throw error;
+    }
+};
+
 export const getAllTickets = async () => {
     try {
         const q = query(collection(db, "tickets"), orderBy("createdAt", "desc"));
