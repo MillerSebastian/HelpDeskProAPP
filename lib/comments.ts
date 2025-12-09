@@ -16,6 +16,7 @@ export interface Comment {
     authorId: string;
     authorName: string;
     authorRole: "client" | "agent";
+    authorPhotoURL?: string;
     message: string;
     createdAt: Timestamp;
 }

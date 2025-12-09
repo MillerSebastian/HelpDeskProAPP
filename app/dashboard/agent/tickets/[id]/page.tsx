@@ -87,6 +87,7 @@ export default function AgentTicketDetailsPage() {
                 authorId: user.uid,
                 authorName: user.displayName || user.email || "Agent",
                 authorRole: "agent",
+                authorPhotoURL: user.photoURL || undefined,
                 message: newComment,
             });
 
@@ -224,9 +225,13 @@ export default function AgentTicketDetailsPage() {
                                                         className={`flex gap-4 ${comment.authorRole === "agent" ? "flex-row-reverse" : ""
                                                             }`}
                                                     >
-                                                        <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${comment.authorRole === "agent" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
+                                                        <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center overflow-hidden ${comment.authorRole === "agent" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
                                                             }`}>
-                                                            <User className="h-4 w-4" />
+                                                            {comment.authorPhotoURL ? (
+                                                                <img src={comment.authorPhotoURL} alt={comment.authorName} className="h-full w-full object-cover" />
+                                                            ) : (
+                                                                <User className="h-4 w-4" />
+                                                            )}
                                                         </div>
                                                         <div className={`flex flex-col max-w-[80%] ${comment.authorRole === "agent" ? "items-end" : "items-start"
                                                             }`}>
