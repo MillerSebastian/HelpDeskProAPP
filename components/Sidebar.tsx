@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Ticket, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Ticket, LogOut, Users, Settings } from "lucide-react";
 import { auth } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
 
@@ -25,6 +25,12 @@ export function Sidebar() {
             href: role === "client" ? "/dashboard/client/tickets" : "/dashboard/agent/tickets",
             color: "text-violet-500",
         },
+        ...(role === "agent" ? [{
+            label: "Users",
+            icon: Users,
+            href: "/dashboard/agent/users",
+            color: "text-orange-500",
+        }] : []),
         {
             label: "Settings",
             icon: Settings,
@@ -34,7 +40,7 @@ export function Sidebar() {
     ];
 
     return (
-        <div className="space-y-4 py-4 flex flex-col h-full bg-secondary/10 text-secondary-foreground border-r">
+        <div className="space-y-4 py-4 flex flex-col h-full bg-card text-card-foreground border-r">
             <div className="px-3 py-2 flex-1">
                 <Link href="/" className="flex items-center pl-3 mb-14">
                     <h1 className="text-2xl font-bold">HelpDeskPro</h1>
@@ -46,7 +52,9 @@ export function Sidebar() {
                             href={route.href}
                             className={cn(
                                 "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-primary hover:bg-primary/10 rounded-lg transition",
-                                pathname === route.href ? "text-primary bg-primary/10" : "text-muted-foreground"
+                                pathname === route.href || (route.href !== "/" && pathname.startsWith(route.href))
+                                    ? "text-primary bg-primary/10"
+                                    : "text-muted-foreground"
                             )}
                         >
                             <div className="flex items-center flex-1">

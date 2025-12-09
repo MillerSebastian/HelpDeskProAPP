@@ -12,6 +12,7 @@ import { auth } from "@/lib/firebase";
 import { Loader2, Upload, User as UserIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default function SettingsPage() {
     const { user } = useAuth();
@@ -124,11 +125,12 @@ export default function SettingsPage() {
     };
 
     return (
-        <div className="flex h-screen bg-gray-100">
+        <div className="flex h-screen bg-background">
             <Sidebar />
             <div className="flex-1 flex flex-col overflow-hidden">
-                <header className="bg-white shadow-sm z-10 p-4">
-                    <h1 className="text-2xl font-bold text-gray-800">Settings</h1>
+                <header className="bg-card shadow-sm z-10 p-4 flex justify-between items-center border-b">
+                    <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+                    <ModeToggle />
                 </header>
 
                 <main className="flex-1 overflow-y-auto p-6 space-y-6">
@@ -141,7 +143,7 @@ export default function SettingsPage() {
                             <CardContent>
                                 <form onSubmit={handleUpdateProfile} className="space-y-6">
                                     <div className="flex items-center gap-6">
-                                        <div className="relative h-24 w-24 rounded-full overflow-hidden bg-gray-100 border-2 border-gray-200">
+                                        <div className="relative h-24 w-24 rounded-full overflow-hidden bg-muted border-2 border-border">
                                             {photoURL ? (
                                                 <Image
                                                     src={photoURL}
@@ -150,7 +152,7 @@ export default function SettingsPage() {
                                                     className="object-cover"
                                                 />
                                             ) : (
-                                                <div className="flex items-center justify-center h-full w-full text-gray-400">
+                                                <div className="flex items-center justify-center h-full w-full text-muted-foreground">
                                                     <UserIcon className="h-12 w-12" />
                                                 </div>
                                             )}
@@ -162,7 +164,7 @@ export default function SettingsPage() {
                                         </div>
                                         <div className="flex-1">
                                             <Label htmlFor="picture" className="cursor-pointer">
-                                                <div className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium">
+                                                <div className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 font-medium">
                                                     <Upload className="h-4 w-4" />
                                                     Change Profile Photo
                                                 </div>
@@ -175,7 +177,7 @@ export default function SettingsPage() {
                                                     disabled={uploading}
                                                 />
                                             </Label>
-                                            <p className="text-xs text-gray-500 mt-1">
+                                            <p className="text-xs text-muted-foreground mt-1">
                                                 JPG, GIF or PNG. Max size of 800K
                                             </p>
                                         </div>

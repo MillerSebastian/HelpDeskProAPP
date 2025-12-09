@@ -8,6 +8,8 @@ import {
     orderBy,
     serverTimestamp,
     Timestamp,
+    doc,
+    getDoc,
 } from "firebase/firestore";
 
 export interface Comment {
@@ -27,6 +29,43 @@ export const createComment = async (commentData: Omit<Comment, "id" | "createdAt
             ...commentData,
             createdAt: serverTimestamp(),
         });
+
+        // Send email notification
+        const ticketDoc = await getDoc(doc(db, "tickets", commentData.ticketId));
+        if (ticketDoc.exists()) {
+            const ticket = ticketDoc.data();
+            let recipientId = "";
+            let emailSubject = "";
+            let emailText = "";
+
+            if (commentData.authorRole === "agent") {
+                // Notify client
+                recipientId = ticket.createdBy;
+                emailSubject = `New Message on Ticket: ${ticket.title}`;
+                emailText = `Agent ${commentData.authorName} replied to your ticket "${ticket.title}":\n\n"${commentData.message}"`;
+            } else if (commentData.authorRole === "client" && ticket.assignedTo) {
+                // Notify agent
+                recipientId = ticket.assignedTo;
+                emailSubject = `New Message on Ticket: ${ticket.title}`;
+                emailText = `Client ${commentData.authorName} replied to ticket "${ticket.title}":\n\n"${commentData.message}"`;
+            }
+
+            if (recipientId) {
+                const userDoc = await getDoc(doc(db, "users", recipientId));
+                if (userDoc.exists() && userDoc.data().email) {
+                    await fetch("/api/send-email", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            to: userDoc.data().email,
+                            subject: emailSubject,
+                            text: emailText,
+                        }),
+                    });
+                }
+            }
+        }
+
         return docRef.id;
     } catch (error) {
         console.error("Error creating comment:", error);

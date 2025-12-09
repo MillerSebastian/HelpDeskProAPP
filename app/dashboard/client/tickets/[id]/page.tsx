@@ -15,6 +15,8 @@ import { ArrowLeft, Send, Loader2, User, Clock } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { UserAvatar } from "@/components/UserAvatar";
+import { ModeToggle } from "@/components/mode-toggle";
 
 const getStatusColor = (status: string) => {
     switch (status) {
@@ -119,16 +121,19 @@ export default function TicketDetailsPage() {
 
     return (
         <ProtectedRoute allowedRoles={["client"]}>
-            <div className="flex h-screen bg-gray-100">
+            <div className="flex h-screen bg-background">
                 <Sidebar />
                 <div className="flex-1 flex flex-col overflow-hidden">
-                    <header className="bg-white shadow-sm z-10 p-4 flex items-center gap-4">
-                        <Button variant="ghost" size="icon" asChild>
-                            <Link href="/dashboard/client">
-                                <ArrowLeft className="h-4 w-4" />
-                            </Link>
-                        </Button>
-                        <h1 className="text-2xl font-bold text-gray-800">Ticket Details</h1>
+                    <header className="bg-card shadow-sm z-10 p-4 flex items-center justify-between gap-4 border-b">
+                        <div className="flex items-center gap-4">
+                            <Button variant="ghost" size="icon" asChild>
+                                <Link href="/dashboard/client">
+                                    <ArrowLeft className="h-4 w-4" />
+                                </Link>
+                            </Button>
+                            <h1 className="text-2xl font-bold text-foreground">Ticket Details</h1>
+                        </div>
+                        <ModeToggle />
                     </header>
 
                     <main className="flex-1 overflow-y-auto p-6 space-y-6">
@@ -149,8 +154,8 @@ export default function TicketDetailsPage() {
                                     </CardHeader>
                                     <CardContent>
                                         <div className="prose max-w-none">
-                                            <h3 className="text-sm font-semibold text-gray-900 mb-2">Description</h3>
-                                            <p className="text-gray-700 whitespace-pre-wrap">{ticket.description}</p>
+                                            <h3 className="text-sm font-semibold text-foreground mb-2">Description</h3>
+                                            <p className="text-muted-foreground whitespace-pre-wrap">{ticket.description}</p>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -169,14 +174,12 @@ export default function TicketDetailsPage() {
                                                         className={`flex gap-4 ${comment.authorRole === "client" ? "flex-row-reverse" : ""
                                                             }`}
                                                     >
-                                                        <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center overflow-hidden ${comment.authorRole === "client" ? "bg-primary text-primary-foreground" : "bg-gray-200 text-gray-600"
-                                                            }`}>
-                                                            {comment.authorPhotoURL ? (
-                                                                <img src={comment.authorPhotoURL} alt={comment.authorName} className="h-full w-full object-cover" />
-                                                            ) : (
-                                                                <User className="h-4 w-4" />
-                                                            )}
-                                                        </div>
+                                                        <UserAvatar
+                                                            userId={comment.authorId}
+                                                            src={comment.authorPhotoURL}
+                                                            alt={comment.authorName}
+                                                            className="flex-shrink-0"
+                                                        />
                                                         <div className={`flex flex-col max-w-[80%] ${comment.authorRole === "client" ? "items-end" : "items-start"
                                                             }`}>
                                                             <div className="flex items-center gap-2 mb-1">
@@ -188,8 +191,8 @@ export default function TicketDetailsPage() {
                                                                 </span>
                                                             </div>
                                                             <div className={`p-3 rounded-lg text-sm ${comment.authorRole === "client"
-                                                                    ? "bg-primary text-primary-foreground rounded-tr-none"
-                                                                    : "bg-gray-100 text-gray-800 rounded-tl-none"
+                                                                ? "bg-primary text-primary-foreground rounded-tr-none"
+                                                                : "bg-gray-100 text-gray-800 rounded-tl-none"
                                                                 }`}>
                                                                 {comment.message}
                                                             </div>
