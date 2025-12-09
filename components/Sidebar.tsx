@@ -34,7 +34,7 @@ export function Sidebar() {
     ];
 
     return (
-        <div className="space-y-4 py-4 flex flex-col h-full bg-secondary/10 text-secondary-foreground border-r">
+        <div className="space-y-4 py-4 flex flex-col h-full bg-card text-card-foreground border-r">
             <div className="px-3 py-2 flex-1">
                 <Link href="/" className="flex items-center pl-3 mb-14">
                     <h1 className="text-2xl font-bold">HelpDeskPro</h1>
