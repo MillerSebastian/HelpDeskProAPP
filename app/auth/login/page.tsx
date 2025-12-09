@@ -1,16 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { signInWithEmailAndPassword, GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from "firebase/auth";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, Github } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -57,11 +57,11 @@ export default function LoginPage() {
         }
     };
 
-    const handleSocialLogin = async (providerName: "google" | "github") => {
+    const handleGoogleLogin = async () => {
         setLoading(true);
         setError("");
         try {
-            const provider = providerName === "google" ? new GoogleAuthProvider() : new GithubAuthProvider();
+            const provider = new GoogleAuthProvider();
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
 
@@ -70,18 +70,11 @@ export default function LoginPage() {
             const userDoc = await getDoc(userDocRef);
 
             if (!userDoc.exists()) {
-                // Create user document if it doesn't exist
-                await setDoc(userDocRef, {
-                    uid: user.uid,
-                    name: user.displayName || "Unknown User",
-                    email: user.email,
-                    role: "client", // Default role
-                    createdAt: new Date(),
-                    photoURL: user.photoURL,
-                    provider: providerName
-                });
-                router.push("/dashboard/client");
+                // User not registered in platform
+                await auth.signOut();
+                setError("Gmail no registrado en la plataforma");
             } else {
+                // User exists, check role
                 const role = userDoc.data().role;
                 if (role === "agent") {
                     router.push("/dashboard/agent");
@@ -90,7 +83,7 @@ export default function LoginPage() {
                 }
             }
         } catch (err: any) {
-            setError(`Failed to login with ${providerName}. ${err.message}`);
+            setError(`Failed to login with Google. ${err.message}`);
             console.error(err);
         } finally {
             setLoading(false);
@@ -101,6 +94,7 @@ export default function LoginPage() {
         <div className="flex items-center justify-center min-h-screen bg-background p-4">
             <Card className="w-full max-w-md">
                 <CardHeader>
+                    <h1 className="text-3xl font-bold text-center text-primary mb-2">HelpDeskPro</h1>
                     <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>
                     <CardDescription className="text-center">
                         Enter your email and password to access your account
@@ -151,8 +145,8 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Button variant="outline" onClick={() => handleSocialLogin("google")} disabled={loading}>
+                    <div className="grid grid-cols-1 gap-4">
+                        <Button variant="outline" onClick={handleGoogleLogin} disabled={loading}>
                             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                                 <path
                                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -172,10 +166,6 @@ export default function LoginPage() {
                                 />
                             </svg>
                             Google
-                        </Button>
-                        <Button variant="outline" onClick={() => handleSocialLogin("github")} disabled={loading}>
-                            <Github className="mr-2 h-4 w-4" />
-                            Github
                         </Button>
                     </div>
                 </CardContent>
