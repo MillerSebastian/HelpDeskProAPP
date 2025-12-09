@@ -12,6 +12,8 @@ import Link from "next/link";
 import { format } from "date-fns";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Input } from "@/components/ui/input";
+import { ModeToggle } from "@/components/mode-toggle";
+import { CreateTicketDialog } from "@/components/CreateTicketDialog";
 
 const getStatusColor = (status: string) => {
     switch (status) {
@@ -68,17 +70,20 @@ export default function ClientTicketsPage() {
 
     return (
         <ProtectedRoute allowedRoles={["client"]}>
-            <div className="flex h-screen bg-gray-100">
+            <div className="flex h-screen bg-background">
                 <Sidebar />
                 <div className="flex-1 flex flex-col overflow-hidden">
-                    <header className="bg-white shadow-sm z-10 p-4 flex justify-between items-center">
-                        <h1 className="text-2xl font-bold text-gray-800">My Tickets</h1>
-                        <Button asChild>
-                            <Link href="/dashboard/client/create-ticket">
-                                <Plus className="mr-2 h-4 w-4" />
-                                New Ticket
-                            </Link>
-                        </Button>
+                    <header className="bg-card shadow-sm z-10 p-4 flex justify-between items-center border-b">
+                        <h1 className="text-2xl font-bold text-foreground">My Tickets</h1>
+                        <div className="flex items-center gap-4">
+                            <ModeToggle />
+                            <CreateTicketDialog onTicketCreated={() => window.location.reload()}>
+                                <Button>
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    New Ticket
+                                </Button>
+                            </CreateTicketDialog>
+                        </div>
                     </header>
 
                     <main className="flex-1 overflow-y-auto p-6 space-y-6">
@@ -106,10 +111,10 @@ export default function ClientTicketsPage() {
                                     <div className="space-y-4">
                                         {filteredTickets.map((ticket) => (
                                             <Link href={`/dashboard/client/tickets/${ticket.id}`} key={ticket.id}>
-                                                <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition cursor-pointer mb-3">
+                                                <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition cursor-pointer mb-3">
                                                     <div className="flex-1">
                                                         <div className="flex items-center gap-2 mb-1">
-                                                            <h3 className="font-semibold text-gray-900">{ticket.title}</h3>
+                                                            <h3 className="font-semibold text-foreground">{ticket.title}</h3>
                                                             <Badge className={getStatusColor(ticket.status)}>
                                                                 {ticket.status}
                                                             </Badge>
@@ -117,8 +122,8 @@ export default function ClientTicketsPage() {
                                                                 {ticket.priority}
                                                             </Badge>
                                                         </div>
-                                                        <p className="text-sm text-gray-500 line-clamp-1">{ticket.description}</p>
-                                                        <p className="text-xs text-gray-400 mt-1">
+                                                        <p className="text-sm text-muted-foreground line-clamp-1">{ticket.description}</p>
+                                                        <p className="text-xs text-muted-foreground mt-1">
                                                             Created on {ticket.createdAt ? format(ticket.createdAt.toDate(), "PPP") : "N/A"}
                                                         </p>
                                                     </div>

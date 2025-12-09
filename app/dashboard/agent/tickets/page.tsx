@@ -12,6 +12,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Input } from "@/components/ui/input";
+import { ModeToggle } from "@/components/mode-toggle";
 
 const getStatusColor = (status: string) => {
     switch (status) {
@@ -68,11 +69,12 @@ export default function AgentTicketsPage() {
 
     return (
         <ProtectedRoute allowedRoles={["agent"]}>
-            <div className="flex h-screen bg-gray-100">
+            <div className="flex h-screen bg-background">
                 <Sidebar />
                 <div className="flex-1 flex flex-col overflow-hidden">
-                    <header className="bg-white shadow-sm z-10 p-4 flex justify-between items-center">
-                        <h1 className="text-2xl font-bold text-gray-800">My Assigned Tickets</h1>
+                    <header className="bg-card shadow-sm z-10 p-4 flex justify-between items-center border-b">
+                        <h1 className="text-2xl font-bold text-foreground">My Assigned Tickets</h1>
+                        <ModeToggle />
                     </header>
 
                     <main className="flex-1 overflow-y-auto p-6 space-y-6">
@@ -100,10 +102,10 @@ export default function AgentTicketsPage() {
                                     <div className="space-y-4">
                                         {filteredTickets.map((ticket) => (
                                             <Link href={`/dashboard/agent/tickets/${ticket.id}`} key={ticket.id}>
-                                                <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition cursor-pointer mb-3">
+                                                <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition cursor-pointer mb-3">
                                                     <div className="flex-1">
                                                         <div className="flex items-center gap-2 mb-1">
-                                                            <h3 className="font-semibold text-gray-900">{ticket.title}</h3>
+                                                            <h3 className="font-semibold text-foreground">{ticket.title}</h3>
                                                             <Badge className={getStatusColor(ticket.status)}>
                                                                 {ticket.status}
                                                             </Badge>
@@ -111,8 +113,8 @@ export default function AgentTicketsPage() {
                                                                 {ticket.priority}
                                                             </Badge>
                                                         </div>
-                                                        <p className="text-sm text-gray-500 line-clamp-1">{ticket.description}</p>
-                                                        <p className="text-xs text-gray-400 mt-1">
+                                                        <p className="text-sm text-muted-foreground line-clamp-1">{ticket.description}</p>
+                                                        <p className="text-xs text-muted-foreground mt-1">
                                                             Created by {ticket.createdByName} on {ticket.createdAt ? format(ticket.createdAt.toDate(), "PPP") : "N/A"}
                                                         </p>
                                                     </div>

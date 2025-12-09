@@ -18,6 +18,7 @@ import { getAllTickets, Ticket } from "@/lib/tickets";
 import { CheckCircle2, Clock, AlertCircle, Loader2, Filter } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
+import { ModeToggle } from "@/components/mode-toggle";
 
 const getStatusIcon = (status: string) => {
     switch (status) {
@@ -86,11 +87,12 @@ export default function AgentDashboard() {
 
     return (
         <ProtectedRoute allowedRoles={["agent"]}>
-            <div className="flex h-screen bg-gray-100">
+            <div className="flex h-screen bg-background">
                 <Sidebar />
                 <div className="flex-1 flex flex-col overflow-hidden">
-                    <header className="bg-white shadow-sm z-10 p-4 flex justify-between items-center">
-                        <h1 className="text-2xl font-bold text-gray-800">Agent Dashboard</h1>
+                    <header className="bg-card shadow-sm z-10 p-4 flex justify-between items-center border-b">
+                        <h1 className="text-2xl font-bold text-foreground">Agent Dashboard</h1>
+                        <ModeToggle />
                     </header>
 
                     <main className="flex-1 overflow-y-auto p-6 space-y-6">
@@ -173,14 +175,14 @@ export default function AgentDashboard() {
                                         <div className="space-y-4">
                                             {filteredTickets.map((ticket) => (
                                                 <Link href={`/dashboard/agent/tickets/${ticket.id}`} key={ticket.id}>
-                                                    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer mb-2">
+                                                    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer mb-2">
                                                         <div className="flex items-center gap-4">
-                                                            <div className="p-2 bg-gray-100 rounded-full">
+                                                            <div className="p-2 bg-muted rounded-full">
                                                                 {getStatusIcon(ticket.status)}
                                                             </div>
                                                             <div>
-                                                                <h3 className="font-semibold text-gray-900">{ticket.title}</h3>
-                                                                <p className="text-sm text-gray-500">
+                                                                <h3 className="font-semibold text-foreground">{ticket.title}</h3>
+                                                                <p className="text-sm text-muted-foreground">
                                                                     ID: {ticket.id} • User: {ticket.createdByName} • {ticket.createdAt ? format(ticket.createdAt.toDate(), "MMM d, yyyy") : "N/A"}
                                                                 </p>
                                                             </div>

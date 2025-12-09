@@ -12,6 +12,8 @@ import { getTicketsByUser, Ticket as TicketType } from "@/lib/tickets";
 import { Plus, Ticket, CheckCircle2, Clock, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
+import { ModeToggle } from "@/components/mode-toggle";
+import { CreateTicketDialog } from "@/components/CreateTicketDialog";
 
 const getStatusColor = (status: string) => {
     switch (status) {
@@ -50,13 +52,14 @@ export default function ClientDashboard() {
 
     return (
         <ProtectedRoute allowedRoles={["client"]}>
-            <div className="flex h-screen bg-gray-100">
+            <div className="flex h-screen bg-background">
                 <Sidebar />
                 <div className="flex-1 flex flex-col overflow-hidden">
-                    <header className="bg-white shadow-sm z-10 p-4 flex justify-between items-center">
-                        <h1 className="text-2xl font-bold text-gray-800">My Dashboard</h1>
+                    <header className="bg-card shadow-sm z-10 p-4 flex justify-between items-center border-b">
+                        <h1 className="text-2xl font-bold text-foreground">My Dashboard</h1>
                         <div className="flex items-center gap-4">
-                            <span className="text-sm text-gray-600">Welcome, {user?.displayName}</span>
+                            <ModeToggle />
+                            <span className="text-sm text-muted-foreground">Welcome, {user?.displayName}</span>
                         </div>
                     </header>
 
@@ -92,12 +95,12 @@ export default function ClientDashboard() {
                                     <CardTitle className="text-lg">Need Help?</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <Button className="w-full" asChild>
-                                        <Link href="/dashboard/client/create-ticket">
+                                    <CreateTicketDialog onTicketCreated={() => window.location.reload()}>
+                                        <Button className="w-full">
                                             <Plus className="mr-2 h-4 w-4" />
                                             Create New Ticket
-                                        </Link>
-                                    </Button>
+                                        </Button>
+                                    </CreateTicketDialog>
                                 </CardContent>
                             </Card>
                         </div>
@@ -117,14 +120,14 @@ export default function ClientDashboard() {
                                         <div className="space-y-4">
                                             {tickets.map((ticket) => (
                                                 <Link href={`/dashboard/client/tickets/${ticket.id}`} key={ticket.id}>
-                                                    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer mb-2">
+                                                    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer mb-2">
                                                         <div className="flex items-center gap-4">
-                                                            <div className="p-2 bg-gray-100 rounded-full">
-                                                                <Clock className="h-4 w-4 text-gray-500" />
+                                                            <div className="p-2 bg-muted rounded-full">
+                                                                <Clock className="h-4 w-4 text-muted-foreground" />
                                                             </div>
                                                             <div>
-                                                                <h3 className="font-semibold text-gray-900">{ticket.title}</h3>
-                                                                <p className="text-sm text-gray-500">
+                                                                <h3 className="font-semibold text-foreground">{ticket.title}</h3>
+                                                                <p className="text-sm text-muted-foreground">
                                                                     ID: {ticket.id} • {ticket.createdAt ? format(ticket.createdAt.toDate(), "MMM d, yyyy") : "N/A"}
                                                                 </p>
                                                             </div>
