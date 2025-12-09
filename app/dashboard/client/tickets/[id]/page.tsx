@@ -73,6 +73,7 @@ export default function TicketDetailsPage() {
                 authorId: user.uid,
                 authorName: user.displayName || user.email || "Unknown User",
                 authorRole: "client",
+                authorPhotoURL: user.photoURL || undefined,
                 message: newComment,
             });
 
@@ -168,9 +169,13 @@ export default function TicketDetailsPage() {
                                                         className={`flex gap-4 ${comment.authorRole === "client" ? "flex-row-reverse" : ""
                                                             }`}
                                                     >
-                                                        <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${comment.authorRole === "client" ? "bg-primary text-primary-foreground" : "bg-gray-200 text-gray-600"
+                                                        <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center overflow-hidden ${comment.authorRole === "client" ? "bg-primary text-primary-foreground" : "bg-gray-200 text-gray-600"
                                                             }`}>
-                                                            <User className="h-4 w-4" />
+                                                            {comment.authorPhotoURL ? (
+                                                                <img src={comment.authorPhotoURL} alt={comment.authorName} className="h-full w-full object-cover" />
+                                                            ) : (
+                                                                <User className="h-4 w-4" />
+                                                            )}
                                                         </div>
                                                         <div className={`flex flex-col max-w-[80%] ${comment.authorRole === "client" ? "items-end" : "items-start"
                                                             }`}>
