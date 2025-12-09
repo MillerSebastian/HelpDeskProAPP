@@ -18,10 +18,14 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
+import { usePresence } from "@/hooks/usePresence";
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [role, setRole] = useState<"client" | "agent" | null>(null);
     const [loading, setLoading] = useState(true);
+
+    usePresence(user);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
